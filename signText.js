@@ -1,7 +1,7 @@
 const openpgp = require('openpgp');
 const fs = require('fs');
 const file = fs.readFileSync('./testdoc.pdf');
-let privkey = fs.readFileSync('./private1.key', 'utf-8'); //encrypted private key
+let privkey = fs.readFileSync('./private2.key', 'utf-8'); //encrypted private key
 let passphrase = 'secret'; //what the privKey is encrypted with
 openpgp.config.aead_protect = true;
 
@@ -16,5 +16,8 @@ openpgp.sign({
     date: Date.now(),
 })
 .then(signed => {
-    fs.writeFileSync('./testdoc.pdf.sig', signed.signature);
+    fs.readFile('./testdoc.pdf.sig', 'utf-8', (err, file) => {
+        fs.writeFileSync('./testdoc.pdf.sig', err ? signed.signature : file + '-next-\n' + signed.signature );
+    });
+    
 });
